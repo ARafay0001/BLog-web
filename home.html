@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body { margin: 0; padding: 0; background: #f6f6f9; }
+    header { background: rgb(96,96,255); color: white; display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; }
+    .logo { font-size: 1.6rem; font-weight: 700; }
+    .key { padding: 6px 16px; border-radius: 8px; background: white; color: rgb(96,96,255); cursor: pointer; font-weight: 500; transition: 0.3s; }
+    .key:hover { background: rgb(174,174,255); color: white; }
+    .user {
+      display: flex;
+      align-items: center;
+    }
+   
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">blog-web</div>
+    <div class="user">
+      <div class="profile">Welcome : <span id="profile">Admin</span></div>
+      <div class="key" id="logout" style="margin-left: 16px;">Logout</div>
+    </div>
+  </header>
+
+  <script>
+    const activeUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const profileName = document.getElementById("profile");
+    const logoutBtn = document.getElementById("logout");
+
+    profileName.innerHTML = activeUser.email;
+
+    logoutBtn.addEventListener('click', ()=> {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html"
+    })
+  </script>
+
+</body>
+</html>
