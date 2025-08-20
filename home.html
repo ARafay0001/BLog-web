@@ -14,11 +14,111 @@
     .logo { font-size: 1.6rem; font-weight: 700; }
     .key { padding: 6px 16px; border-radius: 8px; background: white; color: rgb(96,96,255); cursor: pointer; font-weight: 500; transition: 0.3s; }
     .key:hover { background: rgb(174,174,255); color: white; }
-    .user {
+    .user { display: flex; align-items: center; }
+
+    .blog-form {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #f9f9f9;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 15px;
     }
-   
+
+    .blog-form .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blog-form label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .blog-form input[type="text"],
+    .blog-form textarea {
+      padding: 10px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .blog-form textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .blog-form button {
+      padding: 12px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .blog-form button:hover {
+      background: #357abd;
+    }
+
+    .postBlog {
+      margin: 16px auto;
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      background-color:#4a90e2;
+      width: fit-content;
+      padding: 12px 16px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .postBlog:hover { background-color:#76aff0; }
+    .disable { display: none; }
+
+
+    .blogs {
+      max-width: 90%;
+      margin: 20px auto;
+    }
+    .blog-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #f9f9f9;
+      max-width: 100%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .blog-card h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+    .blog-card p {
+      margin: 5px 0;
+      line-height: 1.5;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .blog-card .blog-description {
+      max-width: 80%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+
+    @media (max-width: 600px) {
+      .blog-card {
+        padding: 10px;
+      }
+      .blog-card .blog-description {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -30,18 +130,85 @@
     </div>
   </header>
 
+  <div class="postBlog" id="postBlog">Post a Blog</div>
+
+  <form class="blog-form disable" id="blogForm">
+    <div class="field">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" placeholder="Enter blog title" required>
+    </div>
+
+    <div class="field">
+      <label for="author">Author</label>
+      <input type="text" id="author" name="author" placeholder="Enter author name" required>
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" placeholder="Write your blog description..." required></textarea>
+    </div>
+
+    <button type="submit" id="submit">Submit</button>
+  </form>
+
+  <h1 style="text-align:center;">Blog's</h1>
+  <div class="blogs" id="blogs"></div>
+
   <script>
     const activeUser = JSON.parse(localStorage.getItem("loggedInUser"));
     const profileName = document.getElementById("profile");
     const logoutBtn = document.getElementById("logout");
+    const postbtn = document.getElementById("postBlog");
 
     profileName.innerHTML = activeUser.email;
 
     logoutBtn.addEventListener('click', ()=> {
       localStorage.removeItem("loggedInUser");
-      window.location.href = "index.html"
-    })
-  </script>
+      window.location.href = "index.html";
+    });
 
+    postbtn.addEventListener('click', ()=> {
+      const postForm = document.getElementById("blogForm");
+      postForm.classList.toggle("disable");
+    });
+
+    const submit = document.getElementById("submit");
+    const userData = JSON.parse(localStorage.getItem(activeUser.email)) || {};
+
+    submit.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value;
+      const author = document.getElementById("author").value;
+      const description = document.getElementById("description").value;
+
+      userData.blogArray = userData.blogArray || [];
+      userData.blogArray.push({ title, author, description });
+
+      localStorage.setItem(activeUser.email, JSON.stringify(userData));
+
+      renderBlogs();
+      document.getElementById("blogForm").reset();
+      document.getElementById("blogForm").classList.add("disable");
+    });
+
+    function renderBlogs() {
+      const blogs = document.getElementById("blogs");
+      blogs.innerHTML = "";
+
+      (userData.blogArray || []).forEach(blog => {
+        blogs.innerHTML += `
+          <div class="blog-card">
+            <h2 class="blog-title"> ${blog.title}</h2>
+            <p class="blog-description"><strong>Description : </strong> ${blog.description}</p>
+            <p class="blog-author"><strong>Author : </strong> ${blog.author}</p>
+          </div>
+        `;
+      });
+    }
+
+
+    renderBlogs();
+  </script>
 </body>
 </html>
